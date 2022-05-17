@@ -25,7 +25,7 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
     TZ_FILE_PATH: str
     TZ_TABLE_DATA: List[Dict[str, str]]
 
-    def __init__(self: CSVTimeZoneLoader, tzfile: str):
+    def __init__(self: CSVTimeZoneLoader, tzfile: str) -> None:
         
         self.TZ_FILE_PATH = tzfile
         self.init()
@@ -59,17 +59,17 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
             raise CSVTimeZoneLoaderInitError(f"File {self.TZ_FILE_PATH} is not a csv file.")
 
-    def timezone(self: CSVTimeZoneLoader, td_str: Union[str, None]) -> dt.timezone:
+    def timezone(self: CSVTimeZoneLoader, td_str: str) -> dt.timezone:
 
         if not td_str:
 
             raise CSVTimeZoneLoaderInitError(f"No timezone specified.")
 
         tzname: str
-        tzname = self.get_tz(td_str=td_str)
+        tzname = self.get_tzname(td_str=td_str)
         return dt.timezone(offset=self.timedelta(td_str=td_str), name=tzname)
 
-    def timedelta(self: CSVTimeZoneLoader, td_str: Union[str, None]) -> dt.timedelta:
+    def timedelta(self: CSVTimeZoneLoader, td_str: str) -> dt.timedelta:
 
         if not td_str:
 
@@ -101,7 +101,7 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
         return td if pv or not nv else -td
 
-    def get_tz(self: CSVTimeZoneLoader, td_str: Union[str, None]) -> str:
+    def get_tzname(self: CSVTimeZoneLoader, td_str: str) -> str:
 
         if not td_str:
 
@@ -124,7 +124,7 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
             raise CSVTimeZoneLoaderInitError(f"Invalid timezone string {td_str}")
 
-    def get_td(self: CSVTimeZoneLoader, country_code: Union[str, None] = None, tzname: Union[str, None] = None, tzinfo: Union[str, None] = None) -> Union[str, None]:
+    def get_td(self: CSVTimeZoneLoader, country_code: str = "", tzname: str = "", tzinfo: str = "", timedelta: str = "") -> str:
 
         if hasattr(self, "TZ_TABLE_DATA"):
 
@@ -149,6 +149,11 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
                 fieldnames.append("tzinfo")
                 checker.append(tzinfo)
 
+            if timedelta:
+
+                fieldnames.append("timedelta")
+                checker.append(timedelta)
+
             fieldnum: int
             fieldnum = len(fieldnames)
 
@@ -157,7 +162,7 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
             if checknum == 0:
 
-                raise CSVTimeZoneLoaderInitError(f"No country_code, timezone, or region specified.")
+                raise CSVTimeZoneLoaderInitError(f"No country_code, tzname, or tzinfo specified.")
 
             for row in self.TZ_TABLE_DATA:
 
@@ -188,11 +193,11 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
                     if row["timedelta"] == "":
 
-                        raise CSVTimeZoneLoaderInitError(f"No timezone found for country code {country_code}")
+                        raise CSVTimeZoneLoaderInitError(f"No timedelta found!")
 
                     if row["tzname"] == "":
 
-                        raise CSVTimeZoneLoaderInitError(f"No timezone name found for country code {country_code}")
+                        raise CSVTimeZoneLoaderInitError(f"No timezone name found!")
 
                     return row["timedelta"] + "," + row["tzname"]
 
@@ -200,7 +205,7 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
                     #     if row["tzname"] == "":
 
-                    #         raise CSVTimeZoneLoaderInitError(f"No timezone name found for country code {country_code}")
+                    #         raise CSVTimeZoneLoaderInitError(f"No timezone name found!")
 
                     #     return row["timedelta"] + "," + row["tzname"]
 
@@ -212,7 +217,76 @@ class CSVTimeZoneLoader(CSVTimeZoneLoaderType):
 
             raise CSVTimeZoneLoaderInitError(f"CSVTimeZoneLoader has not been initialized.")
         
-        return None
+        return ""
+
+    def get_tzinfo(self: CSVTimeZoneLoader, country_code: str = "", tzname: str = "") -> str:
+
+        if hasattr(self, "TZ_TABLE_DATA"):
+
+            fieldnames: List[str, Any, Any]
+            fieldnames = []
+
+            checker: List[str, Any, Any]
+            checker = []
+
+            if country_code:
+
+                fieldnames.append("country_code")
+                checker.append(country_code)
+
+            if tzname:
+                
+                fieldnames.append("tzname")
+                checker.append(tzname)
+
+            fieldnum: int
+            fieldnum = len(fieldnames)
+
+            checknum: int
+            checknum = len(checker)
+
+            if checknum == 0:
+
+                raise CSVTimeZoneLoaderInitError(f"No country_code, tzname, or tzinfo specified.")
+
+            for row in self.TZ_TABLE_DATA:
+
+                passing: bool
+                passing = True
+
+                ##* checker is a list of strings
+                for i in range(fieldnum):
+
+                    if i < checknum:
+
+                        key: str
+                        value: str
+
+                        key = fieldnames[i]
+                        value = checker[i]
+
+                        if row[key].lower() != value.lower():
+
+                            passing = False
+                            break
+
+                    else:
+
+                        break
+
+                if passing:
+
+                    if row["tzinfo"] == "":
+
+                        raise CSVTimeZoneLoaderInitError(f"No timezone info found!")
+
+                    return row["tzinfo"]
+
+        else:
+
+            raise CSVTimeZoneLoaderInitError(f"CSVTimeZoneLoader has not been initialized.")
+        
+        return ""
 
 
 DateTime: Any
@@ -236,7 +310,7 @@ class DateTime(DateTimeType):
 
     CTZ: CSVTimeZoneLoaderType
 
-    def __init__(self: DateTime):
+    def __init__(self: DateTime) -> None:
 
         self.init()
 
@@ -257,7 +331,7 @@ class DateTime(DateTimeType):
             microseconds=0,
         )
 
-    def init(self: DateTime):
+    def init(self: DateTime) -> None:
 
         self.COUNTRY_CODE = ""
 
@@ -268,41 +342,171 @@ class DateTime(DateTimeType):
 
         self.DATETIME = dt.datetime.now(dt.timezone.utc)
 
-    def set_ctz(self: DateTime, ctz: CSVTimeZoneLoaderType):
+    def set_ctz(self: DateTime, ctz: CSVTimeZoneLoaderType) -> bool:
 
-        self.CTZ = ctz
+        if isinstance(ctz, CSVTimeZoneLoader):
+        
+            self.CTZ = ctz
 
-    def str_to_dt(self: DateTime, context: str):
+            return True
+
+        return False
+
+    def ch_tz(self: DateTime, country_code: str = "", tzinfo: str = "", tzname: str = "") -> bool:
+
+        if country_code:
+
+            self.COUNTRY_CODE = country_code
+
+        if tzinfo:
+
+            self.TZ_INFO = tzinfo
+            self.TZ_NAME = self.CTZ.get_tzname(td_str=self.CTZ.get_td(tzinfo=tzinfo))
+
+        if tzname:
+
+            self.TZ_INFO = self.CTZ.get_tzinfo(tzname=tzname)
+            self.TZ_NAME = tzname
+
+        return True if country_code or tzinfo or tzname else False
+
+    def str_to_dt(self: DateTime, context: str, tz: Union[dt.timezone, None] = None) -> dt.datetime:
 
         n: int
         n = len(context)
 
+        z: str
+        z = ""
+
+        ##* debug
+        # print(context, n)
+
+        # todos: handler timedelta in context
+
+        ##* 29 32
+        ##* 2022-05-17 18:58:47.342+07:00
+        ##* 2022-05-17 18:58:47.342998+07:00
+        ##* 30 33
+        ##* 2022-05-17 18:58:47.342+07:00Z
+        ##* 2022-05-17 18:58:47.342998+07:00Z
+        ##* get utcoffset
+        ##* 23 29, 26 32
+        ##* :3 4: skip double dots
+
         ##* change mid empty string
-        if context[10:1] == " ": context = context[0:10] +  "T" + context[11:] 
+        if context[10] == " ": context = context[:10] +  "T" + context[11:] 
 
         if n == 19:
 
-            return dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%S")
+            d: dt.datetime
+            d = dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%S")
+            return d.replace(tzinfo=tz) if tz else d
         
         elif n == 20:
         
-            return dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%SZ")
+            d: dt.datetime
+            d = dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%SZ")
+            return d.replace(tzinfo=tz) if tz else d
+
+        elif n == 23 or n == 26:
+
+            d: dt.datetime
+            d = dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%S.%f")
+            return d.replace(tzinfo=tz) if tz else d
 
         elif n == 24 or n == 27:
 
-            return dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%S.%fZ")
+            d: dt.datetime
+            d = dt.datetime.strptime(context, "%Y-%m-%dT%H:%M:%S.%fZ")
+            return d.replace(tzinfo=tz) if tz else d
+
+        elif (n == 28 or n == 29) and context[26] == "0":
+
+            z = context[23:28]
+            context = context[:23] + context[28:]
+
+            tz: dt.timezone
+            tz = self.CTZ.timezone(td_str=self.CTZ.get_td(timedelta=z))
+
+            ##* fallback
+            return self.str_to_dt(context=context, tz=tz)
+
+        elif (n == 29 or n == 30) and context[26] == ":":
+
+            z = context[23:29]
+            z = z[:3] + z[4:]
+            context = context[:23] + context[29:]
+
+            tz: dt.timezone
+            tz = self.CTZ.timezone(td_str=self.CTZ.get_td(timedelta=z))
+
+            ##* fallback
+            return self.str_to_dt(context=context, tz=tz)
+
+        elif (n == 31 or n == 32) and context[29] == "0":
+
+            z = context[26:31]            
+            context = context[:26] + context[31:]
+
+            tz: dt.timezone
+            tz = self.CTZ.timezone(td_str=self.CTZ.get_td(timedelta=z))
+
+            ##* fallback
+            return self.str_to_dt(context=context, tz=tz)
+
+        elif (n == 32 or n == 33) and context[29] == ":":
+
+            z = context[26:32]
+            z = z[:3] + z[4:]
+            
+            context = context[:26] + context[32:]
+
+            tz: dt.timezone
+            tz = self.CTZ.timezone(td_str=self.CTZ.get_td(timedelta=z))
+
+            ##* fallback
+            return self.str_to_dt(context=context, tz=tz)
 
         else:
 
             raise DateTimeInitError(f"Invalid datetime string.")
 
-    def to_convert(self: DateTime, td_str: str):
+    def to_dt(self: DateTime, td_str: str = "") -> dt.datetime:
 
-        return self.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=td_str)) \
-            + self.CTZ.timedelta(td_str=td_str) \
-                - self.CTZ.timedelta(td_str=self.TIMEDELTA)
+        if td_str:
 
-    def dt_from(self: DateTime, dt: dt.datetime):
+            return self.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=td_str)) \
+                + self.CTZ.timedelta(td_str=td_str) \
+                    - self.CTZ.timedelta(td_str=self.TIMEDELTA)
+
+        return self.DATETIME
+
+    def set_dt_from(self: DateTime, dt: dt.datetime) -> None:
+
+        tzname: str
+        tzname = dt.tzname()
+
+        if tzname:
+
+            td: str
+            td = self.CTZ.get_td(tzname=tzname)
+
+            # self.DATETIME = dt.replace(tzinfo=self.CTZ.timezone(td_str=self.TIMEDELTA)) \
+            #     + self.CTZ.timedelta(td_str=self.TIMEDELTA) \
+            #         - self.CTZ.timedelta(td_str=td)
+
+            self.DATETIME = dt
+
+            self.TZ_INFO = self.CTZ.get_tzinfo(tzname=tzname)
+            self.TZ_NAME = tzname
+
+            self.TIMEDELTA = td
+
+        else:
+
+            raise DateTimeInitError(f"No timezone specified.")
+
+    def ch_dt_from(self: DateTime, dt: dt.datetime) -> None:
 
         tzname: str
         tzname = dt.tzname()
@@ -316,8 +520,10 @@ class DateTime(DateTimeType):
                 + self.CTZ.timedelta(td_str=self.TIMEDELTA) \
                     - self.CTZ.timedelta(td_str=td)
 
-            self.TZ_INFO = self.CTZ.get_tz(td_str=td)
-            self.TZ_NAME = tzname
+            # self.TZ_INFO = self.CTZ.get_tzname(td_str=td)
+            # self.TZ_NAME = tzname
+
+            # self.TIMEDELTA = td
 
         else:
 
@@ -390,7 +596,7 @@ class DateTime(DateTimeType):
 
         return context
 
-    def date_fix(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0):
+    def date_fix(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int]:
 
         milliseconds += microseconds // 1000
         microseconds = microseconds % 1000
@@ -436,19 +642,19 @@ class DateTime(DateTimeType):
 
         return (years, months, days, hours, minutes, seconds, milliseconds, microseconds)
 
-    def enhance_tm_sec(self: DateTime, sec: int):
+    def enhance_tm_sec(self: DateTime, sec: int) -> dt.datetime:
 
         return self.enhance_tm_auto(sec=sec)
 
-    def enhance_tm_ms(self: DateTime, ms: int):
+    def enhance_tm_ms(self: DateTime, ms: int) -> dt.datetime:
 
         return self.enhance_tm_auto(ms=ms)
 
-    def enhance_tm_us(self: DateTime, us: int):
+    def enhance_tm_us(self: DateTime, us: int) -> dt.datetime:
 
         return self.enhance_tm_auto(us=us)
 
-    def enhance_tm_auto(self: DateTime, sec: int = 0, ms: int = 0, us: int = 0):
+    def enhance_tm_auto(self: DateTime, sec: int = 0, ms: int = 0, us: int = 0) -> dt.datetime:
 
         Y: int
         m: int
@@ -532,12 +738,15 @@ class DateTime(DateTimeType):
         
         if hasattr(self, "CTZ"):
 
-            # d.set_ctz(self.CTZ)
             d.CTZ = self.CTZ
+
+        else:
+
+            raise DateTimeInitError(f"{self.__class__.__name__} object has no CTZ attribute.")
 
         return d
 
-    def get_struct_tm(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1):
+    def get_struct_tm(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time:
         
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -545,8 +754,8 @@ class DateTime(DateTimeType):
         hours = self.get_hours() if hours == 0 else hours
         minutes = self.get_minutes() if minutes == 0 else minutes
         seconds = self.get_seconds() if seconds == 0 else seconds
-        weekdays = self.get_weekday() if weekdays == 0 else weekdays
-        yeardays = self.get_yearday() if yeardays == 0 else yeardays
+        weekdays = self.get_weekday(years=years, months=months, days=days) if weekdays == 0 else weekdays
+        yeardays = self.get_yearday(years=years, months=months, days=days) if yeardays == 0 else yeardays
         is_dst = self.is_dst() if is_dst == -1 else is_dst
 
         return time.mktime((
@@ -561,15 +770,16 @@ class DateTime(DateTimeType):
             is_dst
         ))
 
-    def get_year(self: DateTime):
+    def get_year(self: DateTime) -> int:
 
         return self.DATETIME.year
 
-    def get_month(self: DateTime):
+    def get_month(self: DateTime) -> int:
 
         return self.DATETIME.month
 
-    def get_mon(self: DateTime, years: int = 0, months: int = 0):
+    ##* get max days in month
+    def get_mon(self: DateTime, years: int = 0, months: int = 0) -> int:
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -599,7 +809,7 @@ class DateTime(DateTimeType):
 
         raise DateTimeInitError(f"Invalid month")
 
-    def get_weekday(self: DateTime, years: int = 0, months: int = 0, days: int = 0):
+    def get_weekday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -648,7 +858,7 @@ class DateTime(DateTimeType):
             start_at_wdays=w
         )
     
-    def __get_weekday(self: DateTime, years: int, months: int, days: int, start_at_years: int, start_at_wdays: int):
+    def __get_weekday(self: DateTime, years: int, months: int, days: int, start_at_years: int, start_at_wdays: int) -> int:
 
         if years < start_at_years:
 
@@ -674,7 +884,7 @@ class DateTime(DateTimeType):
             yday = self.get_yearday(years=Y, months=12, days=31)
 
             ##* if yday 366 than wday is equals 2 
-            wday += 1 if yday == 365 else 2
+            wday += 1 if yday == 365 or not yday != 366 else 2
 
             wday = wday % 7
 
@@ -687,11 +897,11 @@ class DateTime(DateTimeType):
 
         return wday
 
-    def get_day(self: DateTime):
+    def get_day(self: DateTime) -> int:
 
         return self.DATETIME.day
 
-    def get_yearday(self: DateTime, years: int = 0, months: int = 0, days: int = 0):
+    def get_yearday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -710,34 +920,38 @@ class DateTime(DateTimeType):
         return z + days
         
 
-    def get_hours(self: DateTime):
+    def get_hours(self: DateTime) -> int:
 
         return self.DATETIME.hour
 
-    def get_minutes(self: DateTime):
+    def get_minutes(self: DateTime) -> int:
 
         return self.DATETIME.minute
 
-    def get_seconds(self: DateTime):
+    def get_seconds(self: DateTime) -> int:
 
         return self.DATETIME.second
 
-    def get_milliseconds(self: DateTime):
+    def get_milliseconds(self: DateTime) -> int:
         
         return self.DATETIME.microsecond // 1000
 
-    def is_dst(self: DateTime):
+    def get_microseconds(self: DateTime) -> int:
+
+        return self.DATETIME.microsecond
+
+    def is_dst(self: DateTime) -> int:
 
         return 0
 
 
 class TimeFix(object):
 
-    MONTH_NAMES: List[str]
-    MONTH_NAMES = [ "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
+    MONTH_FULLNAMES: List[str]
+    MONTH_FULLNAMES = [ "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
 
-    MONTH_MINIMALS: List[str]
-    MONTH_MINIMALS = [ "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" ]
+    MONTH_NAMES: List[str]
+    MONTH_NAMES = [ "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" ]
 
     ROMAN_NUMS: List[str]
     ROMAN_NUMS = [ "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" ]
@@ -759,10 +973,9 @@ if str(__name__).upper() in ("__MAIN__",):
 
         # print(ctz.TZ_TABLE_DATA)
 
-        tzinfo = "america/new_york"
+        tzinfo = "America/New_York"
 
         print(dt.datetime.now(tz=dt.timezone.utc))
-
 
         d = dt.datetime.now(tz=ctz.timezone(ctz.get_td(tzinfo=tzinfo)))
 
@@ -787,10 +1000,10 @@ if str(__name__).upper() in ("__MAIN__",):
         d = DateTime()
         d.set_ctz(ctz)
         print(repr(d.enhance_tm_sec(0)))
-        d.DATETIME = d.to_convert(ctz.get_td(tzinfo="Asia/Jakarta"))
-        d.dt_from(d.DATETIME) ##* go back to UTC
+        d.DATETIME = d.to_dt(ctz.get_td(tzinfo="Asia/Jakarta"))
+        d.ch_dt_from(d.DATETIME) ##* go back to UTC
         print(repr(d.enhance_tm_sec(0)))
-        d.DATETIME = d.to_convert(ctz.get_td(tzinfo="Asia/Jakarta"))
+        d.DATETIME = d.to_dt(ctz.get_td(tzinfo="Asia/Jakarta"))
         d.COUNTRY_CODE = "ID"
         d.TZ_INFO = "Asia/Jakarta"
         d.TZ_NAME = "WIB"
@@ -809,5 +1022,6 @@ if str(__name__).upper() in ("__MAIN__",):
         print(str(d.enhance_tm_sec(0)))
         print(str(d.enhance_tm_sec(0).DATETIME.tzname()))
 
+        print(d.get_weekday(years=2022, months=5, days=17))
 
-        print(d.get_weekday(years=1985, months=12, days=10))
+        print(d.str_to_dt("2022-05-17 18:58:47.342998+0700"))
