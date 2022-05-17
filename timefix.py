@@ -914,8 +914,8 @@ class DateTime(DateTimeType):
             yday: int
             yday = self.get_yearday(years=Y, months=12, days=31)
 
-            ##* if yday 366 than wday is equals 2 
-            wday += 1 if yday == 365 or not yday != 366 else 2
+            ##* if yday 366 than wday is equals 2
+            wday += 1 if yday == 365 or not yday == 366 else 2
 
             wday = wday % 7
 
@@ -983,6 +983,12 @@ class TimeFix(object):
 
     MONTH_NAMES: List[str]
     MONTH_NAMES = [ "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" ]
+
+    WEEKDAY_FULLNAMES: str
+    WEEKDAY_FULLNAMES = [ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" ]
+
+    WEEKDAY_NAMES: str
+    WEEKDAY_NAMES = [ "mon", "tue", "wed", "thu", "fri", "sat", "sun" ]
 
     ROMAN_NUMS: List[str]
     ROMAN_NUMS = [ "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" ]
@@ -1067,6 +1073,9 @@ if str(__name__).upper() in ("__MAIN__",):
     print(str(d.enhance_tm_sec(0)))
     print(str(d.enhance_tm_sec(0).DATETIME.tzname()))
 
-    print(d.get_weekday(years=2022, months=5, days=17))
+    print(d.enhance_tm_sec(0).DATETIME.weekday())
+    print(d)
+    print(d.get_weekday())
+    print(d.get_weekday(years=2002, months=7, days=7))
 
     print(d.str_to_dt("2022-05-17 18:58:47.342998+0700"))
