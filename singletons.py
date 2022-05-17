@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import datetime as dt
+import io
+import tempfile
 import time
 
 from abc import ABC, abstractmethod
@@ -18,10 +20,12 @@ class CSVTimeZoneLoaderType(ABC):
     DIGITS: str
 
     TZ_FILE_PATH: str
+    TZ_FILE_STREAM: Union[io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None]
+
     TZ_TABLE_DATA: List[Dict[str, str]]
     
     @abstractmethod
-    def __init__(self: CSVTimeZoneLoaderType, tzfile: str) -> None: pass
+    def __init__(self: CSVTimeZoneLoaderType, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper]) -> None: pass
 
     @abstractmethod
     def init(self: CSVTimeZoneLoaderType) -> None: pass
