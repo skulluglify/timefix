@@ -605,6 +605,8 @@ class DateTime(DateTimeType):
 
         if td_str:
 
+            ## todos: CTZ maybe is None
+
             return self.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=td_str)) \
                 + self.CTZ.timedelta(td_str=td_str) \
                     - self.CTZ.timedelta(td_str=self.TIMEDELTA)
@@ -645,6 +647,8 @@ class DateTime(DateTimeType):
 
             td: str
             td = self.CTZ.get_td(tzname=tzname)
+
+            ## todos: CTZ maybe is None
 
             self.DATETIME = dt.replace(tzinfo=self.CTZ.timezone(td_str=self.TIMEDELTA)) \
                 + self.CTZ.timedelta(td_str=self.TIMEDELTA) \
