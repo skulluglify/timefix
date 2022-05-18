@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import time
-import datetime as dt
 import timefix as tm
 
 if str(__name__).upper() in ("__MAIN__",):
@@ -9,12 +8,17 @@ if str(__name__).upper() in ("__MAIN__",):
     # a = tm.TimeFix.create_dt("2002-07-07Z")
     # a = tm.TimeFix.create_dt(time.time())
 
-    a = tm.TimeFix.create_dt(time.time(), tzname="WIB")
+    print(tm.TimeFix.create_dt("2002-07-07Z"))
+
+    a: tm.DateTimeType
+    a = tm.TimeFix.create_dt(tzname="WIB")
 
     print(a)
     print(a.TZ_INFO)
     print(a.TZ_NAME)
     print(a.TIMEDELTA)
+
+    print(a.to_dt(td_str=tm.TimeFix.CTZ.get_td(tzname="BST")))
 
     print(tm.TimeFix.get_months(a))
     print(tm.TimeFix.get_weekdays(a))

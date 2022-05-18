@@ -389,13 +389,23 @@ class DateTime(DateTimeType):
 
                     if td_str:
 
+                        TIMEDELTA: str
+                        TIMEDELTA = getattr(self, "TIMEDELTA", "+0000,UTC")
+
                         self.TZ_INFO = self.CTZ.get_tzinfo(tzname=self.TZ_NAME)
                         self.TIMEDELTA = td_str
-                        
+
                         ##* Optional
-                        if hasattr(self, "CTZ"):
-                        
+                        if not hasattr(self, "DATETIME"):
+                            
                             self.DATETIME = dt.datetime.now(tz=self.CTZ.timezone(td_str=self.TIMEDELTA))
+
+                        else:
+
+                            self.DATETIME = self.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=self.TIMEDELTA)) -\
+                                self.CTZ.timezone(td_str=TIMEDELTA).utcoffset(self.DATETIME) +\
+                                    self.CTZ.timedelta(td_str=self.TIMEDELTA)
+
 
                     elif self.TZ_NAME == "UTC":
 
@@ -403,7 +413,9 @@ class DateTime(DateTimeType):
                         self.TIMEDELTA = "+0000,UTC"
 
                         ##* Optional
-                        self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
+                        if not hasattr(self, "DATETIME"):
+
+                            self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
 
                     else:
 
@@ -422,13 +434,22 @@ class DateTime(DateTimeType):
 
                     if td_str:
 
+                        TIMEDELTA: str
+                        TIMEDELTA = getattr(self, "TIMEDELTA", "+0000,UTC")
+
                         self.TZ_NAME = self.CTZ.get_tzname(td_str=td_str)
                         self.TIMEDELTA = td_str
                         
                         ##* Optional
-                        if hasattr(self, "CTZ"):
+                        if not hasattr(self, "DATETIME"):
                         
                             self.DATETIME = dt.datetime.now(tz=self.CTZ.timezone(td_str=self.TIMEDELTA))
+
+                        else:
+
+                            self.DATETIME = self.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=self.TIMEDELTA)) -\
+                                self.CTZ.timezone(td_str=TIMEDELTA).utcoffset(self.DATETIME) +\
+                                    self.CTZ.timedelta(td_str=self.TIMEDELTA)
 
                     elif self.TZ_INFO == "Etc/Universal":
 
@@ -436,7 +457,9 @@ class DateTime(DateTimeType):
                         self.TIMEDELTA = "+0000,UTC"
 
                         ##* Optional
-                        self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
+                        if not hasattr(self, "DATETIME"):
+                        
+                            self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
 
                     else:
 
