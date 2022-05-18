@@ -155,6 +155,10 @@ class DateTimeType(ABC):
     def is_dst(self: DateTimeType) -> int: pass
 
 
+TimeFixType: Any
+TimeFixType = TypeVar('TimeFixType', bound='TimeFixType')
+
+
 class TimeFixType(ABC):
 
     MONTH_FULLNAMES: List[str]
@@ -170,25 +174,25 @@ class TimeFixType(ABC):
     CTZ: CSVTimeZoneLoaderType
 
     @abstractmethod
-    def __init__(self, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None: pass
+    def __init__(self: TimeFixType, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None: pass
 
     @abstractclassmethod
-    def create_dt(cls, dt: Union[int, float, str, dt.datetime, None] = None) -> DateTimeType: pass
+    def create_dt(cls: TimeFixType, dt: Union[int, float, str, dt.datetime, None] = None, tzname: str = "", tzinfo: str = "") -> DateTimeType: pass
 
     @abstractclassmethod
-    def get_months(cls, dt: DateTimeType) -> Tuple[int, str, str]: pass
+    def get_months(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]: pass
 
     @abstractclassmethod
-    def get_weekdays(cls, dt: DateTimeType) -> Tuple[int, str, str]: pass
+    def get_weekdays(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]: pass
 
     @abstractclassmethod
-    def enhance_tm_sec(cls, dt: DateTimeType, sec: int) -> DateTimeType: pass
+    def enhance_tm_sec(cls: TimeFixType, dt: DateTimeType, sec: int) -> DateTimeType: pass
 
     @abstractclassmethod
-    def enhance_tm_ms(cls, dt: DateTimeType, ms: int) -> DateTimeType: pass
+    def enhance_tm_ms(cls: TimeFixType, dt: DateTimeType, ms: int) -> DateTimeType: pass
 
     @abstractclassmethod
-    def enhance_tm_us(cls, dt: DateTimeType, us: int) -> DateTimeType: pass
+    def enhance_tm_us(cls: TimeFixType, dt: DateTimeType, us: int) -> DateTimeType: pass
 
     @abstractclassmethod
-    def to_str(cls, dt: DateTimeType) -> DateTimeType: pass
+    def to_str(cls: TimeFixType, dt: DateTimeType) -> DateTimeType: pass

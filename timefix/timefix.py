@@ -8,7 +8,7 @@ import tempfile
 import time
 
 from typing import Any, Dict, List, Tuple, TypeVar, Union
-from .singletons import CSVTimeZoneLoaderInitError, CSVTimeZoneLoaderType, DateTimeInitError, DateTimeType
+from .singletons import CSVTimeZoneLoaderInitError, CSVTimeZoneLoaderType, DateTimeInitError, DateTimeType, TimeFixType
 
 
 CSVTimeZoneLoader: Any
@@ -359,14 +359,98 @@ class DateTime(DateTimeType):
 
     def init(self: DateTime) -> None:
 
-        self.COUNTRY_CODE = ""
+        if not hasattr(self, "COUNTRY_CODE"):
+        
+            self.COUNTRY_CODE = ""
 
-        self.TZ_INFO = "Etc/Universal"
-        self.TZ_NAME = "UTC"
+        ##* priority
+        ##* TZ_INFO
+        ##* TZ_NAME
 
-        self.TIMEDELTA = "+0000,UTC"
+        ## todos: TZ_INFO ^ TZ_NAME (Logic if-statement)
 
-        self.DATETIME = dt.datetime.now(dt.timezone.utc)
+        ##* looks like having fun Bugs
+        if not hasattr(self, "TZ_INFO") and not hasattr(self, "TZ_NAME"):
+
+            ##* default timezone
+            self.TZ_INFO = "Etc/Universal"
+            self.TZ_NAME = "UTC"
+            self.TIMEDELTA = "+0000,UTC"
+            self.DATETIME = dt.datetime.now(dt.timezone.utc)
+
+        else:
+
+            if hasattr(self, "TZ_NAME"):
+
+                if hasattr(self, "CTZ"):
+
+                    td_str: str
+                    td_str = self.CTZ.get_td(tzname=self.TZ_NAME)
+
+                    if td_str:
+
+                        self.TZ_INFO = self.CTZ.get_tzinfo(tzname=self.TZ_NAME)
+                        self.TIMEDELTA = td_str
+                        
+                        ##* Optional
+                        if hasattr(self, "CTZ"):
+                        
+                            self.DATETIME = dt.datetime.now(tz=self.CTZ.timezone(td_str=self.TIMEDELTA))
+
+                    elif self.TZ_NAME == "UTC":
+
+                        self.TZ_INFO = "Etc/Universal"
+                        self.TIMEDELTA = "+0000,UTC"
+
+                        ##* Optional
+                        self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
+
+                    else:
+
+                        raise CSVTimeZoneLoaderInitError(f"No timezone found for {self.TZ_INFO}.")
+
+                else:
+
+                    raise CSVTimeZoneLoaderInitError(f"No CSVTimeZoneLoader found.")
+
+            elif hasattr(self, "TZ_INFO"):
+
+                if hasattr(self, "CTZ"):
+
+                    td_str: str
+                    td_str = self.CTZ.get_td(tzinfo=self.TZ_INFO)
+
+                    if td_str:
+
+                        self.TZ_NAME = self.CTZ.get_tzname(td_str=td_str)
+                        self.TIMEDELTA = td_str
+                        
+                        ##* Optional
+                        if hasattr(self, "CTZ"):
+                        
+                            self.DATETIME = dt.datetime.now(tz=self.CTZ.timezone(td_str=self.TIMEDELTA))
+
+                    elif self.TZ_INFO == "Etc/Universal":
+
+                        self.TZ_NAME = "UTC"
+                        self.TIMEDELTA = "+0000,UTC"
+
+                        ##* Optional
+                        self.DATETIME = self.DATETIME = dt.datetime.now(dt.timezone.utc)
+
+                    else:
+
+                        raise CSVTimeZoneLoaderInitError(f"No timezone found for {self.TZ_INFO}.")
+
+                else:
+
+                    raise CSVTimeZoneLoaderInitError(f"No CSVTimeZoneLoader found.")
+
+            else:
+
+                raise CSVTimeZoneLoaderInitError(f"No country_code, tzname, or tzinfo specified.")
+        
+        pass
 
     def set_ctz(self: DateTime, ctz: CSVTimeZoneLoaderType) -> bool:
 
@@ -1019,7 +1103,7 @@ class DateTime(DateTimeType):
         return 0
 
 
-class TimeFix(object):
+class TimeFix(TimeFixType):
 
     MONTH_FULLNAMES: List[str]
     MONTH_FULLNAMES = [ "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
@@ -1042,7 +1126,7 @@ class TimeFix(object):
     __dt_datetime: type
     __dt_datetime = dt.datetime
 
-    def __init__(self, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None:
+    def __init__(self: TimeFixType, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None:
 
         if tzfile:
 
@@ -1051,7 +1135,7 @@ class TimeFix(object):
         ##* Initialized
 
     @classmethod
-    def create_dt(cls, dt: Union[int, float, str, dt.datetime, None] = None) -> DateTimeType:
+    def create_dt(cls: TimeFixType, dt: Union[int, float, str, dt.datetime, None] = None, tzname: str = "", tzinfo: str = "") -> DateTimeType:
 
         d = DateTime()
         d.set_ctz(cls.CTZ)
@@ -1072,10 +1156,29 @@ class TimeFix(object):
 
             pass
 
+        #************************************************************************************************#
+        #* re-initialized                                                                               *#
+        #************************************************************************************************#
+        tzname = d.DATETIME.tzname() if not tzname else tzname
+
+        if tzname:
+
+            d.TZ_NAME = tzname
+
+        if tzinfo:
+                
+            d.TZ_INFO = tzinfo
+
+        ##* re-initialized
+        d.init()
+        #************************************************************************************************#
+        #* re-initialized                                                                               *#
+        #************************************************************************************************#
+
         return d
 
     @classmethod
-    def get_months(cls, dt: DateTimeType) -> Tuple[int, str, str]:
+    def get_months(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]:
 
         months: int
 
@@ -1086,7 +1189,7 @@ class TimeFix(object):
         return (months + 1, cls.MONTH_NAMES[months], cls.MONTH_FULLNAMES[months])
 
     @classmethod
-    def get_weekdays(cls, dt: DateTimeType) -> Tuple[int, str, str]:
+    def get_weekdays(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]:
 
         wday: int
         wday = dt.get_weekday()
@@ -1094,27 +1197,27 @@ class TimeFix(object):
         return (wday, cls.WEEKDAY_NAMES[wday], cls.WEEKDAY_FULLNAMES[wday])
 
     @classmethod
-    def enhance_tm_sec(cls, dt: DateTimeType, sec: int) -> DateTimeType:
+    def enhance_tm_sec(cls: TimeFixType, dt: DateTimeType, sec: int) -> DateTimeType:
 
         dt.DATETIME = dt.enhance_tm_sec(sec).DATETIME
 
         return dt
 
     @classmethod
-    def enhance_tm_ms(cls, dt: DateTimeType, ms: int) -> DateTimeType:
+    def enhance_tm_ms(cls: TimeFixType, dt: DateTimeType, ms: int) -> DateTimeType:
 
         dt.DATETIME = dt.enhance_tm_ms(ms).DATETIME
         
         return dt
 
     @classmethod
-    def enhance_tm_us(cls, dt: DateTimeType, us: int) -> DateTimeType:
+    def enhance_tm_us(cls: TimeFixType, dt: DateTimeType, us: int) -> DateTimeType:
 
         dt.DATETIME = dt.enhance_tm_us(us).DATETIME
         
         return dt
 
     @classmethod
-    def to_str(cls, dt: DateTimeType) -> DateTimeType:
+    def to_str(cls: TimeFixType, dt: DateTimeType) -> DateTimeType:
 
         return str(dt)

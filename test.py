@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 
 import time
+import datetime as dt
 import timefix as tm
 
 if str(__name__).upper() in ("__MAIN__",):
 
-    # a = TimeFix.create_dt("2002-07-07Z")
-    a = tm.TimeFix.create_dt(time.time())
-    # a = TimeFix.create_dt(dt.datetime.now(tz=dt.timezone.utc))
+    # a = tm.TimeFix.create_dt("2002-07-07Z")
+    # a = tm.TimeFix.create_dt(time.time())
+
+    a = tm.TimeFix.create_dt(time.time(), tzname="WIB")
 
     print(a)
+    print(a.TZ_INFO)
+    print(a.TZ_NAME)
+    print(a.TIMEDELTA)
 
     print(tm.TimeFix.get_months(a))
     print(tm.TimeFix.get_weekdays(a))
