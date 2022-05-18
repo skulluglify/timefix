@@ -5,7 +5,7 @@ import io
 import tempfile
 import time
 
-from abc import ABC, abstractmethod
+from abc import ABC, abstractclassmethod, abstractmethod
 from typing import Any, Dict, List, Tuple, TypeVar, Union
 
 
@@ -98,19 +98,19 @@ class DateTimeType(ABC):
     def to_str(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> str: pass
 
     @abstractmethod
-    def date_fix(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int]: pass
+    def date_fix(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]: pass
     
     @abstractmethod
-    def enhance_tm_sec(self: DateTimeType, sec: int) -> dt.datetime: pass
+    def enhance_tm_sec(self: DateTimeType, sec: int) -> DateTimeType: pass
 
     @abstractmethod
-    def enhance_tm_ms(self: DateTimeType, ms: int) -> dt.datetime: pass
+    def enhance_tm_ms(self: DateTimeType, ms: int) -> DateTimeType: pass
 
     @abstractmethod
-    def enhance_tm_us(self: DateTimeType, us: int) -> dt.datetime: pass
+    def enhance_tm_us(self: DateTimeType, us: int) -> DateTimeType: pass
 
     @abstractmethod
-    def enhance_tm_auto(self: DateTimeType, sec: int = 0, ms: int = 0, us: int = 0) -> dt.datetime: pass
+    def enhance_tm_auto(self: DateTimeType, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType: pass
 
     @abstractmethod
     def get_struct_tm(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time: pass
@@ -161,4 +161,26 @@ class TimeFixType(ABC):
 
     MONTH_NAMES: List[str]
 
-    ROMAN_NUMS: List[str]
+    @abstractmethod
+    def __init__(self, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None: pass
+
+    @abstractclassmethod
+    def create_dt(cls, dt: Union[int, str, dt.datetime, None] = None) -> DateTimeType: pass
+
+    @abstractclassmethod
+    def get_months(cls, dt: DateTimeType) -> Tuple[str, ...]: pass
+
+    @abstractclassmethod
+    def get_weekdays(cls, dt: DateTimeType) -> Tuple[str, ...]: pass
+
+    @abstractclassmethod
+    def enhance_tm_sec(cls, dt: DateTimeType, sec: int) -> DateTimeType: pass
+
+    @abstractclassmethod
+    def enhance_tm_ms(cls, dt: DateTimeType, ms: int) -> DateTimeType: pass
+
+    @abstractclassmethod
+    def enhance_tm_us(cls, dt: DateTimeType, us: int) -> DateTimeType: pass
+
+    @abstractclassmethod
+    def to_str(cls, dt: DateTimeType) -> DateTimeType: pass
