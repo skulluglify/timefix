@@ -8,7 +8,7 @@ import tempfile
 import time
 
 from typing import Any, Dict, List, Tuple, TypeVar, Union
-from singletons import CSVTimeZoneLoaderInitError, CSVTimeZoneLoaderType, DateTimeInitError, DateTimeType
+from .singletons import CSVTimeZoneLoaderInitError, CSVTimeZoneLoaderType, DateTimeInitError, DateTimeType
 
 
 CSVTimeZoneLoader: Any
@@ -1118,21 +1118,3 @@ class TimeFix(object):
     def to_str(cls, dt: DateTimeType) -> DateTimeType:
 
         return str(dt)
-
-
-if str(__name__).upper() in ("__MAIN__",):
-
-    # a = TimeFix.create_dt("2002-07-07Z")
-    a = TimeFix.create_dt(time.time())
-    # a = TimeFix.create_dt(dt.datetime.now(tz=dt.timezone.utc))
-
-    print(a)
-
-    print(TimeFix.get_months(a))
-    print(TimeFix.get_weekdays(a))
-
-    TimeFix.enhance_tm_ms(a, 36000)
-
-    print("H:", a.get_hours())
-    print("M:", a.get_minutes())
-    print("S:", a.get_seconds())
