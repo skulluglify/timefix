@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time
+# import time
 import timefix as tm
 
 if str(__name__).upper() in ("__MAIN__",):
