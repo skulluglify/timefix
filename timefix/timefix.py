@@ -855,6 +855,9 @@ class DateTime(DateTimeType):
             milliseconds=s,
             microseconds=f
         )
+
+        ##* make it milliseconds in microseconds
+        f = s * 1000 + f
         
         tm: time.struct_time
         tm = self.get_struct_tm(
