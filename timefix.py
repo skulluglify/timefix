@@ -822,14 +822,20 @@ class DateTime(DateTimeType):
 
     def get_year(self: DateTime) -> int:
 
+        """year(1, Infinity)"""
+
         return self.DATETIME.year
 
     def get_month(self: DateTime) -> int:
+
+        """month(1, 12)"""
 
         return self.DATETIME.month
 
     ##* get max days in month
     def get_mon(self: DateTime, years: int = 0, months: int = 0) -> int:
+
+        """mon(28, 29, 30, 31)"""
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -860,6 +866,8 @@ class DateTime(DateTimeType):
         raise DateTimeInitError(f"Invalid month")
 
     def get_weekday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
+
+        """weekday(0, 6)"""
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -949,9 +957,13 @@ class DateTime(DateTimeType):
 
     def get_day(self: DateTime) -> int:
 
+        """day(0, 30)"""
+
         return self.DATETIME.day
 
     def get_yearday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
+
+        """yearday(0, 365, 366)"""
 
         years = self.get_year() if years == 0 else years
         months = self.get_month() if months == 0 else months
@@ -972,25 +984,37 @@ class DateTime(DateTimeType):
 
     def get_hours(self: DateTime) -> int:
 
+        """hours(1, 0, 24)"""
+
         return self.DATETIME.hour
 
     def get_minutes(self: DateTime) -> int:
+
+        """minutes(0, 59)"""
 
         return self.DATETIME.minute
 
     def get_seconds(self: DateTime) -> int:
 
+        """seconds(0, 59)"""
+
         return self.DATETIME.second
 
     def get_milliseconds(self: DateTime) -> int:
+
+        """milliseconds(0, 999)"""
         
         return self.DATETIME.microsecond // 1000
 
     def get_microseconds(self: DateTime) -> int:
 
+        """microseconds(0, 999999)"""
+
         return self.DATETIME.microsecond
 
     def is_dst(self: DateTime) -> int:
+
+        """is_dst(0, 1, -1)"""
 
         return 0
 
@@ -1009,8 +1033,14 @@ class TimeFix(object):
     WEEKDAY_NAMES: str
     WEEKDAY_NAMES = [ "mon", "tue", "wed", "thu", "fri", "sat", "sun" ]
 
+    TZ_DATA_BUFFER: io.BytesIO
+    TZ_DATA_BUFFER = io.BytesIO(b"AD,CEST,Europe/Andorra,+0200\nAG,AST,America/Antigua,-0400\nAI,AST,America/Anguilla,-0400\nAL,CEST,Europe/Tirane,+0200\nAO,WAT,Africa/Luanda,+0100\nAQ,NZST,Antarctica/McMurdo,+1200\nAT,CEST,Europe/Vienna,+0200\nAU,ACST,Australia/Adelaide,+0930\nAU,ACST,Australia/Broken_Hill,+0930\nAU,ACST,Australia/Darwin,+0930\nAU,AEST,Antarctica/Macquarie,+1000\nAU,AEST,Australia/Brisbane,+1000\nAU,AEST,Australia/Hobart,+1000\nAU,AEST,Australia/Lindeman,+1000\nAU,AEST,Australia/Melbourne,+1000\nAU,AEST,Australia/Sydney,+1000\nAU,AWST,Australia/Perth,+0800\nAW,AST,America/Aruba,-0400\nAX,EEST,Europe/Mariehamn,+0300\nBA,CEST,Europe/Sarajevo,+0200\nBB,AST,America/Barbados,-0400\nBE,CEST,Europe/Brussels,+0200\nBF,GMT,Africa/Ouagadougou,+0000\nBG,EEST,Europe/Sofia,+0300\nBI,CAT,Africa/Bujumbura,+0200\nBJ,WAT,Africa/Porto_Novo,+0100\nBL,AST,America/St_Barthelemy,-0400\nBQ,AST,America/Kralendijk,-0400\nBR,CDT,America/Bahia,-0500\nBS,EDT,America/Nassau,-0400\nBW,CAT,Africa/Gaborone,+0200\nBZ,CST,America/Belize,-0600\nCA,ADT,America/Glace_Bay,-0300\nCA,ADT,America/Goose_Bay,-0300\nCA,ADT,America/Halifax,-0300\nCA,ADT,America/Moncton,-0300\nCA,AST,America/Blanc_Sablon,-0400\nCA,CDT,America/Rainy_River,-0500\nCA,CDT,America/Rankin_Inlet,-0500\nCA,CDT,America/Resolute,-0500\nCA,CDT,America/Winnipeg,-0500\nCA,CST,America/Regina,-0600\nCA,CST,America/Swift_Current,-0600\nCA,EDT,America/Iqaluit,-0400\nCA,EDT,America/Nipigon,-0400\nCA,EDT,America/Pangnirtung,-0400\nCA,EDT,America/Thunder_Bay,-0400\nCA,EDT,America/Toronto,-0400\nCA,EST,America/Atikokan,-0500\nCA,MDT,America/Cambridge_Bay,-0600\nCA,MDT,America/Edmonton,-0600\nCA,MDT,America/Inuvik,-0600\nCA,MDT,America/Yellowknife,-0600\nCA,MST,America/Creston,-0700\nCA,MST,America/Dawson,-0700\nCA,MST,America/Dawson_Creek,-0700\nCA,MST,America/Fort_Nelson,-0700\nCA,MST,America/Whitehorse,-0700\nCA,NDT,America/St_Johns,-0230\nCA,PDT,America/Vancouver,-0700\nCD,CAT,Africa/Lubumbashi,+0200\nCD,WAT,Africa/Kinshasa,+0100\nCF,WAT,Africa/Bangui,+0100\nCG,WAT,Africa/Brazzaville,+0100\nCH,CEST,Europe/Zurich,+0200\nCI,GMT,Africa/Abidjan,+0000\nCM,WAT,Africa/Douala,+0100\nCN,CST,Asia/Shanghai,+0800\nCR,CST,America/Costa_Rica,-0600\nCU,CDT,America/Havana,-0400\nCW,AST,America/Curacao,-0400\nCY,EEST,Asia/Famagusta,+0300\nCY,EEST,Asia/Nicosia,+0300\nCZ,CEST,Europe/Prague,+0200\nDE,CEST,Europe/Berlin,+0200\nDE,CEST,Europe/Busingen,+0200\nDJ,EAT,Africa/Djibouti,+0300\nDK,CEST,Europe/Copenhagen,+0200\nDM,AST,America/Dominica,-0400\nDO,AST,America/Santo_Domingo,-0400\nDZ,CET,Africa/Algiers,+0100\nEE,EEST,Europe/Tallinn,+0300\nEG,EET,Africa/Cairo,+0200\nER,EAT,Africa/Asmara,+0300\nES,CEST,Africa/Ceuta,+0200\nES,CEST,Europe/Madrid,+0200\nET,EAT,Africa/Addis_Ababa,+0300\nFI,EEST,Europe/Helsinki,+0300\nFR,CEST,Europe/Paris,+0200\nGA,WAT,Africa/Libreville,+0100\nGB,BST,Europe/London,+0100\nGD,AST,America/Grenada,-0400\nGG,BST,Europe/Guernsey,+0100\nGH,GMT,Africa/Accra,+0000\nGI,CEST,Europe/Gibraltar,+0200\nGL,ADT,America/Thule,-0300\nGL,GMT,America/Danmarkshavn,+0000\nGM,GMT,Africa/Banjul,+0000\nGN,GMT,Africa/Conakry,+0000\nGP,AST,America/Guadeloupe,-0400\nGQ,WAT,Africa/Malabo,+0100\nGR,EEST,Europe/Athens,+0300\nGT,CST,America/Guatemala,-0600\nGW,GMT,Africa/Bissau,+0000\nHK,HKT,Asia/Hong_Kong,+0800\nHN,CST,America/Tegucigalpa,-0600\nHR,CEST,Europe/Zagreb,+0200\nHT,EDT,America/Port_au_Prince,-0400\nHU,CEST,Europe/Budapest,+0200\nID,WIB,Asia/Jakarta,+0700\nID,WIB,Asia/Pontianak,+0700\nID,WITA,Asia/Makassar,+0800\nID,WIT,Asia/Jayapura,+0900\nIE,IST,Europe/Dublin,+0100\nIL,IDT,Asia/Jerusalem,+0300\nIM,BST,Europe/Isle_of_Man,+0100\nIN,IST,Asia/Kolkata,+0530\nIT,CEST,Europe/Rome,+0200\nJE,BST,Europe/Jersey,+0100\nJM,EST,America/Jamaica,-0500\nJO,EEST,Asia/Amman,+0300\nJP,JST,Asia/Tokyo,+0900\nKE,EAT,Africa/Nairobi,+0300\nKN,AST,America/St_Kitts,-0400\nKP,KST,Asia/Pyongyang,+0900\nKR,KST,Asia/Seoul,+0900\nKY,EST,America/Cayman,-0500\nLB,EEST,Asia/Beirut,+0300\nLC,AST,America/St_Lucia,-0400\nLI,CEST,Europe/Vaduz,+0200\nLR,GMT,Africa/Monrovia,+0000\nLS,SAST,Africa/Maseru,+0200\nLT,EEST,Europe/Vilnius,+0300\nLU,CEST,Europe/Luxembourg,+0200\nLV,EEST,Europe/Riga,+0300\nLY,EET,Africa/Tripoli,+0200\nMC,CEST,Europe/Monaco,+0200\nMD,EEST,Europe/Chisinau,+0300\nME,CEST,Europe/Podgorica,+0200\nMF,AST,America/Marigot,-0400\nMK,CEST,Europe/Skopje,+0200\nML,GMT,Africa/Bamako,+0000\nMO,CST,Asia/Macau,+0800\nMQ,AST,America/Martinique,-0400\nMR,GMT,Africa/Nouakchott,+0000\nMS,AST,America/Montserrat,-0400\nMT,CEST,Europe/Malta,+0200\nMW,CAT,Africa/Blantyre,+0200\nMX,CDT,America/Bahia_Banderas,-0500\nMX,CDT,America/Matamoros,-0500\nMX,CDT,America/Merida,-0500\nMX,CDT,America/Mexico_City,-0500\nMX,CDT,America/Monterrey,-0500\nMX,EST,America/Cancun,-0500\nMX,MDT,America/Chihuahua,-0600\nMX,MDT,America/Mazatlan,-0600\nMX,MDT,America/Ojinaga,-0600\nMX,MST,America/Hermosillo,-0700\nMX,PDT,America/Tijuana,-0700\nMZ,CAT,Africa/Maputo,+0200\nNA,CAT,Africa/Windhoek,+0200\nNE,WAT,Africa/Niamey,+0100\nNG,WAT,Africa/Lagos,+0100\nNI,CST,America/Managua,-0600\nNL,CEST,Europe/Amsterdam,+0200\nNO,CEST,Europe/Oslo,+0200\nPA,EST,America/Panama,-0500\nPH,PST,Asia/Manila,+0800\nPK,PKT,Asia/Karachi,+0500\nPL,CEST,Europe/Warsaw,+0200\nPR,AST,America/Puerto_Rico,-0400\nPS,EEST,Asia/Gaza,+0300\nPS,EEST,Asia/Hebron,+0300\nPT,WEST,Europe/Lisbon,+0100\nRO,EEST,Europe/Bucharest,+0300\nRS,CEST,Europe/Belgrade,+0200\nRU,EET,Europe/Kaliningrad,+0200\nRU,MSK,Europe/Moscow,+0300\nRW,CAT,Africa/Kigali,+0200\nSD,CAT,Africa/Khartoum,+0200\nSE,CEST,Europe/Stockholm,+0200\nSI,CEST,Europe/Ljubljana,+0200\nSK,CEST,Europe/Bratislava,+0200\nSL,GMT,Africa/Freetown,+0000\nSM,CEST,Europe/San_Marino,+0200\nSN,GMT,Africa/Dakar,+0000\nSO,EAT,Africa/Mogadishu,+0300\nSS,CAT,Africa/Juba,+0200\nST,GMT,Africa/Sao_Tome,+0000\nSV,CST,America/El_Salvador,-0600\nSX,AST,America/Lower_Princes,-0400\nSY,EEST,Asia/Damascus,+0300\nSZ,SAST,Africa/Mbabane,+0200\nTC,EDT,America/Grand_Turk,-0400\nTD,WAT,Africa/Ndjamena,+0100\nTG,GMT,Africa/Lome,+0000\nTN,CET,Africa/Tunis,+0100\nTT,AST,America/Port_of_Spain,-0400\nTW,CST,Asia/Taipei,+0800\nTZ,EAT,Africa/Dar_es_Salaam,+0300\nUA,EEST,Europe/Kiev,+0300\nUA,EEST,Europe/Uzhgorod,+0300\nUA,EEST,Europe/Zaporozhye,+0300\nUA,MSK,Europe/Simferopol,+0300\nUG,EAT,Africa/Kampala,+0300\nUS,AKDT,America/Anchorage,-0800\nUS,AKDT,America/Juneau,-0800\nUS,AKDT,America/Metlakatla,-0800\nUS,AKDT,America/Nome,-0800\nUS,AKDT,America/Sitka,-0800\nUS,AKDT,America/Yakutat,-0800\nUS,CDT,America/Chicago,-0500\nUS,CDT,America/Menominee,-0500\nUS,EDT,America/Detroit,-0400\nUS,EDT,America/New_York,-0400\nUS,HDT,America/Adak,-0900\nUS,MDT,America/Boise,-0600\nUS,MDT,America/Denver,-0600\nUS,MST,America/Phoenix,-0700\nUS,PDT,America/Los_Angeles,-0700\nVA,CEST,Europe/Vatican,+0200\nVC,AST,America/St_Vincent,-0400\nVG,AST,America/Tortola,-0400\nVI,AST,America/St_Thomas,-0400\nZA,SAST,Africa/Johannesburg,+0200\nZM,CAT,Africa/Lusaka,+0200\nZW,CAT,Africa/Harare,+0200")
+
     CTZ: CSVTimeZoneLoaderType
-    CTZ = CSVTimeZoneLoader(tzfile=io.BytesIO(b"AD,CEST,Europe/Andorra,+0200\nAG,AST,America/Antigua,-0400\nAI,AST,America/Anguilla,-0400\nAL,CEST,Europe/Tirane,+0200\nAO,WAT,Africa/Luanda,+0100\nAQ,NZST,Antarctica/McMurdo,+1200\nAT,CEST,Europe/Vienna,+0200\nAU,ACST,Australia/Adelaide,+0930\nAU,ACST,Australia/Broken_Hill,+0930\nAU,ACST,Australia/Darwin,+0930\nAU,AEST,Antarctica/Macquarie,+1000\nAU,AEST,Australia/Brisbane,+1000\nAU,AEST,Australia/Hobart,+1000\nAU,AEST,Australia/Lindeman,+1000\nAU,AEST,Australia/Melbourne,+1000\nAU,AEST,Australia/Sydney,+1000\nAU,AWST,Australia/Perth,+0800\nAW,AST,America/Aruba,-0400\nAX,EEST,Europe/Mariehamn,+0300\nBA,CEST,Europe/Sarajevo,+0200\nBB,AST,America/Barbados,-0400\nBE,CEST,Europe/Brussels,+0200\nBF,GMT,Africa/Ouagadougou,+0000\nBG,EEST,Europe/Sofia,+0300\nBI,CAT,Africa/Bujumbura,+0200\nBJ,WAT,Africa/Porto_Novo,+0100\nBL,AST,America/St_Barthelemy,-0400\nBQ,AST,America/Kralendijk,-0400\nBR,CDT,America/Bahia,-0500\nBS,EDT,America/Nassau,-0400\nBW,CAT,Africa/Gaborone,+0200\nBZ,CST,America/Belize,-0600\nCA,ADT,America/Glace_Bay,-0300\nCA,ADT,America/Goose_Bay,-0300\nCA,ADT,America/Halifax,-0300\nCA,ADT,America/Moncton,-0300\nCA,AST,America/Blanc_Sablon,-0400\nCA,CDT,America/Rainy_River,-0500\nCA,CDT,America/Rankin_Inlet,-0500\nCA,CDT,America/Resolute,-0500\nCA,CDT,America/Winnipeg,-0500\nCA,CST,America/Regina,-0600\nCA,CST,America/Swift_Current,-0600\nCA,EDT,America/Iqaluit,-0400\nCA,EDT,America/Nipigon,-0400\nCA,EDT,America/Pangnirtung,-0400\nCA,EDT,America/Thunder_Bay,-0400\nCA,EDT,America/Toronto,-0400\nCA,EST,America/Atikokan,-0500\nCA,MDT,America/Cambridge_Bay,-0600\nCA,MDT,America/Edmonton,-0600\nCA,MDT,America/Inuvik,-0600\nCA,MDT,America/Yellowknife,-0600\nCA,MST,America/Creston,-0700\nCA,MST,America/Dawson,-0700\nCA,MST,America/Dawson_Creek,-0700\nCA,MST,America/Fort_Nelson,-0700\nCA,MST,America/Whitehorse,-0700\nCA,NDT,America/St_Johns,-0230\nCA,PDT,America/Vancouver,-0700\nCD,CAT,Africa/Lubumbashi,+0200\nCD,WAT,Africa/Kinshasa,+0100\nCF,WAT,Africa/Bangui,+0100\nCG,WAT,Africa/Brazzaville,+0100\nCH,CEST,Europe/Zurich,+0200\nCI,GMT,Africa/Abidjan,+0000\nCM,WAT,Africa/Douala,+0100\nCN,CST,Asia/Shanghai,+0800\nCR,CST,America/Costa_Rica,-0600\nCU,CDT,America/Havana,-0400\nCW,AST,America/Curacao,-0400\nCY,EEST,Asia/Famagusta,+0300\nCY,EEST,Asia/Nicosia,+0300\nCZ,CEST,Europe/Prague,+0200\nDE,CEST,Europe/Berlin,+0200\nDE,CEST,Europe/Busingen,+0200\nDJ,EAT,Africa/Djibouti,+0300\nDK,CEST,Europe/Copenhagen,+0200\nDM,AST,America/Dominica,-0400\nDO,AST,America/Santo_Domingo,-0400\nDZ,CET,Africa/Algiers,+0100\nEE,EEST,Europe/Tallinn,+0300\nEG,EET,Africa/Cairo,+0200\nER,EAT,Africa/Asmara,+0300\nES,CEST,Africa/Ceuta,+0200\nES,CEST,Europe/Madrid,+0200\nET,EAT,Africa/Addis_Ababa,+0300\nFI,EEST,Europe/Helsinki,+0300\nFR,CEST,Europe/Paris,+0200\nGA,WAT,Africa/Libreville,+0100\nGB,BST,Europe/London,+0100\nGD,AST,America/Grenada,-0400\nGG,BST,Europe/Guernsey,+0100\nGH,GMT,Africa/Accra,+0000\nGI,CEST,Europe/Gibraltar,+0200\nGL,ADT,America/Thule,-0300\nGL,GMT,America/Danmarkshavn,+0000\nGM,GMT,Africa/Banjul,+0000\nGN,GMT,Africa/Conakry,+0000\nGP,AST,America/Guadeloupe,-0400\nGQ,WAT,Africa/Malabo,+0100\nGR,EEST,Europe/Athens,+0300\nGT,CST,America/Guatemala,-0600\nGW,GMT,Africa/Bissau,+0000\nHK,HKT,Asia/Hong_Kong,+0800\nHN,CST,America/Tegucigalpa,-0600\nHR,CEST,Europe/Zagreb,+0200\nHT,EDT,America/Port_au_Prince,-0400\nHU,CEST,Europe/Budapest,+0200\nID,WIB,Asia/Jakarta,+0700\nID,WIB,Asia/Pontianak,+0700\nID,WITA,Asia/Makassar,+0800\nID,WIT,Asia/Jayapura,+0900\nIE,IST,Europe/Dublin,+0100\nIL,IDT,Asia/Jerusalem,+0300\nIM,BST,Europe/Isle_of_Man,+0100\nIN,IST,Asia/Kolkata,+0530\nIT,CEST,Europe/Rome,+0200\nJE,BST,Europe/Jersey,+0100\nJM,EST,America/Jamaica,-0500\nJO,EEST,Asia/Amman,+0300\nJP,JST,Asia/Tokyo,+0900\nKE,EAT,Africa/Nairobi,+0300\nKN,AST,America/St_Kitts,-0400\nKP,KST,Asia/Pyongyang,+0900\nKR,KST,Asia/Seoul,+0900\nKY,EST,America/Cayman,-0500\nLB,EEST,Asia/Beirut,+0300\nLC,AST,America/St_Lucia,-0400\nLI,CEST,Europe/Vaduz,+0200\nLR,GMT,Africa/Monrovia,+0000\nLS,SAST,Africa/Maseru,+0200\nLT,EEST,Europe/Vilnius,+0300\nLU,CEST,Europe/Luxembourg,+0200\nLV,EEST,Europe/Riga,+0300\nLY,EET,Africa/Tripoli,+0200\nMC,CEST,Europe/Monaco,+0200\nMD,EEST,Europe/Chisinau,+0300\nME,CEST,Europe/Podgorica,+0200\nMF,AST,America/Marigot,-0400\nMK,CEST,Europe/Skopje,+0200\nML,GMT,Africa/Bamako,+0000\nMO,CST,Asia/Macau,+0800\nMQ,AST,America/Martinique,-0400\nMR,GMT,Africa/Nouakchott,+0000\nMS,AST,America/Montserrat,-0400\nMT,CEST,Europe/Malta,+0200\nMW,CAT,Africa/Blantyre,+0200\nMX,CDT,America/Bahia_Banderas,-0500\nMX,CDT,America/Matamoros,-0500\nMX,CDT,America/Merida,-0500\nMX,CDT,America/Mexico_City,-0500\nMX,CDT,America/Monterrey,-0500\nMX,EST,America/Cancun,-0500\nMX,MDT,America/Chihuahua,-0600\nMX,MDT,America/Mazatlan,-0600\nMX,MDT,America/Ojinaga,-0600\nMX,MST,America/Hermosillo,-0700\nMX,PDT,America/Tijuana,-0700\nMZ,CAT,Africa/Maputo,+0200\nNA,CAT,Africa/Windhoek,+0200\nNE,WAT,Africa/Niamey,+0100\nNG,WAT,Africa/Lagos,+0100\nNI,CST,America/Managua,-0600\nNL,CEST,Europe/Amsterdam,+0200\nNO,CEST,Europe/Oslo,+0200\nPA,EST,America/Panama,-0500\nPH,PST,Asia/Manila,+0800\nPK,PKT,Asia/Karachi,+0500\nPL,CEST,Europe/Warsaw,+0200\nPR,AST,America/Puerto_Rico,-0400\nPS,EEST,Asia/Gaza,+0300\nPS,EEST,Asia/Hebron,+0300\nPT,WEST,Europe/Lisbon,+0100\nRO,EEST,Europe/Bucharest,+0300\nRS,CEST,Europe/Belgrade,+0200\nRU,EET,Europe/Kaliningrad,+0200\nRU,MSK,Europe/Moscow,+0300\nRW,CAT,Africa/Kigali,+0200\nSD,CAT,Africa/Khartoum,+0200\nSE,CEST,Europe/Stockholm,+0200\nSI,CEST,Europe/Ljubljana,+0200\nSK,CEST,Europe/Bratislava,+0200\nSL,GMT,Africa/Freetown,+0000\nSM,CEST,Europe/San_Marino,+0200\nSN,GMT,Africa/Dakar,+0000\nSO,EAT,Africa/Mogadishu,+0300\nSS,CAT,Africa/Juba,+0200\nST,GMT,Africa/Sao_Tome,+0000\nSV,CST,America/El_Salvador,-0600\nSX,AST,America/Lower_Princes,-0400\nSY,EEST,Asia/Damascus,+0300\nSZ,SAST,Africa/Mbabane,+0200\nTC,EDT,America/Grand_Turk,-0400\nTD,WAT,Africa/Ndjamena,+0100\nTG,GMT,Africa/Lome,+0000\nTN,CET,Africa/Tunis,+0100\nTT,AST,America/Port_of_Spain,-0400\nTW,CST,Asia/Taipei,+0800\nTZ,EAT,Africa/Dar_es_Salaam,+0300\nUA,EEST,Europe/Kiev,+0300\nUA,EEST,Europe/Uzhgorod,+0300\nUA,EEST,Europe/Zaporozhye,+0300\nUA,MSK,Europe/Simferopol,+0300\nUG,EAT,Africa/Kampala,+0300\nUS,AKDT,America/Anchorage,-0800\nUS,AKDT,America/Juneau,-0800\nUS,AKDT,America/Metlakatla,-0800\nUS,AKDT,America/Nome,-0800\nUS,AKDT,America/Sitka,-0800\nUS,AKDT,America/Yakutat,-0800\nUS,CDT,America/Chicago,-0500\nUS,CDT,America/Menominee,-0500\nUS,EDT,America/Detroit,-0400\nUS,EDT,America/New_York,-0400\nUS,HDT,America/Adak,-0900\nUS,MDT,America/Boise,-0600\nUS,MDT,America/Denver,-0600\nUS,MST,America/Phoenix,-0700\nUS,PDT,America/Los_Angeles,-0700\nVA,CEST,Europe/Vatican,+0200\nVC,AST,America/St_Vincent,-0400\nVG,AST,America/Tortola,-0400\nVI,AST,America/St_Thomas,-0400\nZA,SAST,Africa/Johannesburg,+0200\nZM,CAT,Africa/Lusaka,+0200\nZW,CAT,Africa/Harare,+0200"))
+    CTZ = CSVTimeZoneLoader(tzfile=TZ_DATA_BUFFER)
+
+    __dt_datetime: type
+    __dt_datetime = dt.datetime
 
     def __init__(self, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None:
 
@@ -1021,12 +1051,12 @@ class TimeFix(object):
         ##* Initialized
 
     @classmethod
-    def create_dt(cls, dt: Union[int, str, dt.datetime, None] = None) -> DateTimeType:
+    def create_dt(cls, dt: Union[int, float, str, dt.datetime, None] = None) -> DateTimeType:
 
         d = DateTime()
         d.set_ctz(cls.CTZ)
 
-        if isinstance(dt, int):
+        if type(dt) in (int, float):
 
             d.DATETIME = d.DATETIME.fromtimestamp(dt)
 
@@ -1034,7 +1064,7 @@ class TimeFix(object):
 
             d.DATETIME = d.str_to_dt(dt)
 
-        elif isinstance(dt, dt.datetime):
+        elif isinstance(dt, cls.__dt_datetime):
 
             d.DATETIME = dt
 
@@ -1045,20 +1075,23 @@ class TimeFix(object):
         return d
 
     @classmethod
-    def get_months(cls, dt: DateTimeType) -> Tuple[str, ...]:
+    def get_months(cls, dt: DateTimeType) -> Tuple[int, str, str]:
 
-        wday: int
-        wday = dt.get_month() - 1
+        months: int
 
-        return (cls.MONTH_NAMES[wday], cls.MONTH_FULLNAMES[wday])
+        ##* make it index (0, 11)
+        months = dt.get_month() - 1
+
+        ##* start at 1 from (index)
+        return (months + 1, cls.MONTH_NAMES[months], cls.MONTH_FULLNAMES[months])
 
     @classmethod
-    def get_weekdays(cls, dt: DateTimeType) -> Tuple[str, ...]:
+    def get_weekdays(cls, dt: DateTimeType) -> Tuple[int, str, str]:
 
         wday: int
         wday = dt.get_weekday()
 
-        return (cls.WEEKDAY_NAMES[wday], cls.WEEKDAY_FULLNAMES[wday])
+        return (wday, cls.WEEKDAY_NAMES[wday], cls.WEEKDAY_FULLNAMES[wday])
 
     @classmethod
     def enhance_tm_sec(cls, dt: DateTimeType, sec: int) -> DateTimeType:
@@ -1089,13 +1122,17 @@ class TimeFix(object):
 
 if str(__name__).upper() in ("__MAIN__",):
 
-    a = TimeFix.create_dt("2002-07-07Z")
+    # a = TimeFix.create_dt("2002-07-07Z")
+    a = TimeFix.create_dt(time.time())
+    # a = TimeFix.create_dt(dt.datetime.now(tz=dt.timezone.utc))
 
     print(a)
 
     print(TimeFix.get_months(a))
     print(TimeFix.get_weekdays(a))
 
-    TimeFix.enhance_tm_sec(a, 36000)
+    TimeFix.enhance_tm_ms(a, 36000)
 
-    print(a.get_hours(), "hours")
+    print("H:", a.get_hours())
+    print("M:", a.get_minutes())
+    print("S:", a.get_seconds())

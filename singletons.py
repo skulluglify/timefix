@@ -161,17 +161,25 @@ class TimeFixType(ABC):
 
     MONTH_NAMES: List[str]
 
+    WEEKDAY_FULLNAMES: str
+
+    WEEKDAY_NAMES: str
+
+    TZ_DATA_BUFFER: io.BytesIO
+
+    CTZ: CSVTimeZoneLoaderType
+
     @abstractmethod
     def __init__(self, tzfile: Union[str, io.TextIOWrapper, io.BytesIO, io.StringIO, tempfile._TemporaryFileWrapper, None] = None) -> None: pass
 
     @abstractclassmethod
-    def create_dt(cls, dt: Union[int, str, dt.datetime, None] = None) -> DateTimeType: pass
+    def create_dt(cls, dt: Union[int, float, str, dt.datetime, None] = None) -> DateTimeType: pass
 
     @abstractclassmethod
-    def get_months(cls, dt: DateTimeType) -> Tuple[str, ...]: pass
+    def get_months(cls, dt: DateTimeType) -> Tuple[int, str, str]: pass
 
     @abstractclassmethod
-    def get_weekdays(cls, dt: DateTimeType) -> Tuple[str, ...]: pass
+    def get_weekdays(cls, dt: DateTimeType) -> Tuple[int, str, str]: pass
 
     @abstractclassmethod
     def enhance_tm_sec(cls, dt: DateTimeType, sec: int) -> DateTimeType: pass
