@@ -755,26 +755,57 @@ class DateTime(DateTimeType):
 
     def date_fix(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]:
 
+        # m: int
+        # m = 0
+
         milliseconds += microseconds // 1000
         microseconds = microseconds % 1000
+
+        # m = microseconds // 1000
+        # milliseconds += m
+        # microseconds = microseconds - (m * 1000)
 
         seconds += milliseconds // 1000
         milliseconds = milliseconds % 1000
 
+        # m = milliseconds // 1000
+        # seconds += m
+        # milliseconds = milliseconds - (m * 1000)
+
         minutes += seconds // 60
         seconds = seconds % 60
+
+        # m = seconds // 60
+        # minutes += m
+        # seconds = seconds - (m * 60)
 
         hours += minutes // 60
         minutes = minutes % 60
 
+        # m = minutes // 60
+        # hours += m
+        # minutes = minutes - (m * 60)
+
         days += hours // 24
         hours = hours % 24
+
+        # m = hours // 24
+        # days += m
+        # hours = hours - (m * 24)
 
         months += days // 30
         days = days % 30
 
+        # m = days // 30
+        # months += m
+        # days = days - (m * 30)
+
         years += months // 12
         months = months % 12
+
+        # m = months // 12
+        # years += m
+        # months = months - (m * 12)
 
         #**********************************************************************#
         #* LEAP YEAR                                                          *#
@@ -811,7 +842,11 @@ class DateTime(DateTimeType):
 
         return self.enhance_tm_auto(us=us)
 
-    def enhance_tm_auto(self: DateTime, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType:
+    def enhance_tm_auto(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType:
+
+        if not hasattr(self, "CTZ"):
+
+            raise DateTimeInitError(f"No timezone specified.")
 
         Y: int
         m: int
@@ -822,11 +857,11 @@ class DateTime(DateTimeType):
         s: int
         f: int
 
-        Y = self.get_year()
-        m = self.get_month()
-        d = self.get_day()
-        H = self.get_hours()
-        M = self.get_minutes()
+        Y = self.get_year() + years
+        m = self.get_month() + months
+        d = self.get_day() + days
+        H = self.get_hours() + hours
+        M = self.get_minutes() + minutes
         S = self.get_seconds() + sec
         s = ms
         f = us
@@ -894,19 +929,22 @@ class DateTime(DateTimeType):
         # d.DATETIME = d.DATETIME.replace(tzinfo=self.CTZ.timezone(td_str=self.TIMEDELTA))
         # d.DATETIME = d.DATETIME + self.CTZ.timedelta(td_str=self.TIMEDELTA)
 
-        d.DATETIME = dt.datetime.fromtimestamp(tm) + dt.timedelta(seconds=S, microseconds=f)
+        ##* fix no duplicated
+
+        d.DATETIME = dt.datetime.fromtimestamp(tm) + dt.timedelta(microseconds=f)
 
         d.TZ_INFO = self.TZ_INFO
         d.TZ_NAME = self.TZ_NAME
         d.TIMEDELTA = self.TIMEDELTA
+        d.CTZ = self.CTZ
         
-        if hasattr(self, "CTZ"):
+        # if hasattr(self, "CTZ"):
 
-            d.CTZ = self.CTZ
+        #     d.CTZ = self.CTZ
 
-        else:
+        # else:
 
-            raise DateTimeInitError(f"{self.__class__.__name__} object has no CTZ attribute.")
+        #     raise DateTimeInitError(f"{self.__class__.__name__} object has no CTZ attribute.")
 
         return d
 

@@ -110,7 +110,7 @@ class DateTimeType(ABC):
     def enhance_tm_us(self: DateTimeType, us: int) -> DateTimeType: pass
 
     @abstractmethod
-    def enhance_tm_auto(self: DateTimeType, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType: pass
+    def enhance_tm_auto(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType: pass
 
     @abstractmethod
     def get_struct_tm(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time: pass
