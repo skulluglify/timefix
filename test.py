@@ -20,7 +20,7 @@ if str(__name__).upper() in ("__MAIN__",):
 
     print(a.to_dt(td_str=tm.TimeFix.CTZ.get_td(tzname="BST")))
 
-    print(tm.TimeFix.get_months(a))
+    print(tm.TimeFix.get_month(a))
     print(tm.TimeFix.get_weekdays(a))
 
     tm.TimeFix.enhance_tm_ms(a, 36000)

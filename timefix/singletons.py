@@ -95,10 +95,10 @@ class DateTimeType(ABC):
     def ch_dt_from(self: DateTimeType, dt: dt.datetime) -> None: pass
 
     @abstractmethod
-    def to_str(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> str: pass
+    def to_str(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> str: pass
 
     @abstractmethod
-    def date_fix(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]: pass
+    def date_fix(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]: pass
     
     @abstractmethod
     def enhance_tm_sec(self: DateTimeType, sec: int) -> DateTimeType: pass
@@ -110,10 +110,10 @@ class DateTimeType(ABC):
     def enhance_tm_us(self: DateTimeType, us: int) -> DateTimeType: pass
 
     @abstractmethod
-    def enhance_tm_auto(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType: pass
+    def enhance_tm_auto(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType: pass
 
     @abstractmethod
-    def get_struct_tm(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time: pass
+    def get_struct_tm(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time: pass
 
     @abstractmethod
     def get_year(self: DateTimeType) -> int: pass
@@ -122,19 +122,19 @@ class DateTimeType(ABC):
     def get_month(self: DateTimeType) -> int: pass
 
     @abstractmethod
-    def get_mon(self: DateTimeType, years: int = 0, months: int = 0) -> int: pass
+    def get_mon(self: DateTimeType, years: int = 0, month: int = 0) -> int: pass
 
     @abstractmethod
-    def get_weekday(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0) -> int: pass
+    def get_weekday(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0) -> int: pass
 
     # @abstractmethod
-    # def __get_weekday(self: DateTimeType, years: int, months: int, days: int, start_at_years: int, start_at_wdays: int) -> int: pass
+    # def __get_weekday(self: DateTimeType, years: int, month: int, days: int, start_at_years: int, start_at_wdays: int) -> int: pass
 
     @abstractmethod
     def get_day(self: DateTimeType) -> int: pass
 
     @abstractmethod
-    def get_yearday(self: DateTimeType, years: int = 0, months: int = 0, days: int = 0) -> int: pass
+    def get_yearday(self: DateTimeType, years: int = 0, month: int = 0, days: int = 0) -> int: pass
 
     @abstractmethod
     def get_hours(self: DateTimeType) -> int: pass
@@ -180,7 +180,7 @@ class TimeFixType(ABC):
     def create_dt(cls: TimeFixType, dt: Union[int, float, str, dt.datetime, None] = None, tzname: str = "", tzinfo: str = "") -> DateTimeType: pass
 
     @abstractclassmethod
-    def get_months(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]: pass
+    def get_month(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]: pass
 
     @abstractclassmethod
     def get_weekdays(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]: pass

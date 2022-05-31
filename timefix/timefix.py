@@ -348,7 +348,7 @@ class DateTime(DateTimeType):
 
         return self.to_str(
             years=self.get_year(),
-            months=self.get_month(),
+            month=self.get_month(),
             days=self.get_day(),
             hours=self.get_hours(),
             minutes=self.get_minutes(),
@@ -686,7 +686,7 @@ class DateTime(DateTimeType):
 
             raise DateTimeInitError(f"No timezone specified.")
 
-    def to_str(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> str:
+    def to_str(self: DateTime, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> str:
 
         _Y: int
         _m: int
@@ -700,7 +700,7 @@ class DateTime(DateTimeType):
         ##* normalize datetime
         _Y, _m, _d, _H, _M, _S, _s, _f = self.date_fix(
             years=years,
-            months=months,
+            month=month,
             days=days,
             hours=hours,
             minutes=minutes,
@@ -753,7 +753,7 @@ class DateTime(DateTimeType):
 
         return context
 
-    def date_fix(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]:
+    def date_fix(self: DateTime, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) -> Tuple[int, ...]:
 
         # m: int
         # m = 0
@@ -793,42 +793,60 @@ class DateTime(DateTimeType):
         # days += m
         # hours = hours - (m * 24)
 
-        months += days // 30
+        month += days // 30
         days = days % 30
 
         # m = days // 30
-        # months += m
+        # month += m
         # days = days - (m * 30)
 
-        years += months // 12
-        months = months % 12
+        years += month // 12
+        month = month % 12
 
-        # m = months // 12
+        # m = month // 12
         # years += m
-        # months = months - (m * 12)
+        # month = month - (m * 12)
 
         #**********************************************************************#
         #* LEAP YEAR                                                          *#
         #**********************************************************************#
 
+
         k: int
-        k = self.get_mon(years=years, months=months)
+        k = self.get_mon(years=years, month=month)
+
+        if days == 1 and k == 30:
+
+            month = month - 1
+            days = 31
+
+        elif days > k:
+
+            days = days - k
+            month += 1
+
+        if month > 12:
+
+            month = month - 12
+            years += 1
+
+        k = self.get_mon(years=years, month=month)
 
         if days > k:
 
             days = days - k
-            months += 1
+            month += 1
 
-        if months > 12:
+        if month > 12:
 
-            months = months - 12
+            month = month - 12
             years += 1
         
         #**********************************************************************#
         #* LEAP YEAR                                                          *#
         #**********************************************************************#
 
-        return (years, months, days, hours, minutes, seconds, milliseconds, microseconds)
+        return (years, month, days, hours, minutes, seconds, milliseconds, microseconds)
 
     def enhance_tm_sec(self: DateTime, sec: int) -> DateTimeType:
 
@@ -842,7 +860,7 @@ class DateTime(DateTimeType):
 
         return self.enhance_tm_auto(us=us)
 
-    def enhance_tm_auto(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType:
+    def enhance_tm_auto(self: DateTime, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, sec: int = 0, ms: int = 0, us: int = 0) -> DateTimeType:
 
         if not hasattr(self, "CTZ"):
 
@@ -858,7 +876,7 @@ class DateTime(DateTimeType):
         f: int
 
         Y = self.get_year() + years
-        m = self.get_month() + months
+        m = self.get_month() + month
         d = self.get_day() + days
         H = self.get_hours() + hours
         M = self.get_minutes() + minutes
@@ -870,7 +888,7 @@ class DateTime(DateTimeType):
         # context: str
         # context = self.to_str(
         #     years=Y,
-        #     months=m,
+        #     month=m,
         #     days=d,
         #     hours=H,
         #     minutes=M,
@@ -882,7 +900,7 @@ class DateTime(DateTimeType):
         ##* date normalize
         Y, m, d, H, M, S, s, f = self.date_fix(
             years=Y,
-            months=m,
+            month=m,
             days=d,
             hours=H,
             minutes=M,
@@ -897,13 +915,13 @@ class DateTime(DateTimeType):
         tm: time.struct_time
         tm = self.get_struct_tm(
             years=Y,
-            months=m,
+            month=m,
             days=d,
             hours=H,
             minutes=M,
             seconds=S,
-            weekdays=self.get_weekday(years=Y, months=m, days=d),
-            yeardays=self.get_yearday(years=Y, months=m, days=d),
+            weekdays=self.get_weekday(years=Y, month=m, days=d),
+            yeardays=self.get_yearday(years=Y, month=m, days=d),
 
             ##* tricky, idk, but still works necessary
             is_dst=self.is_dst()
@@ -948,21 +966,21 @@ class DateTime(DateTimeType):
 
         return d
 
-    def get_struct_tm(self: DateTime, years: int = 0, months: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time:
+    def get_struct_tm(self: DateTime, years: int = 0, month: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, weekdays: int = 0, yeardays: int = 0, is_dst: int = -1) -> time.struct_time:
         
         years = self.get_year() if years == 0 else years
-        months = self.get_month() if months == 0 else months
+        month = self.get_month() if month == 0 else month
         days = self.get_day() if days == 0 else days
         hours = self.get_hours() if hours == 0 else hours
         minutes = self.get_minutes() if minutes == 0 else minutes
         seconds = self.get_seconds() if seconds == 0 else seconds
-        weekdays = self.get_weekday(years=years, months=months, days=days) if weekdays == 0 else weekdays
-        yeardays = self.get_yearday(years=years, months=months, days=days) if yeardays == 0 else yeardays
+        weekdays = self.get_weekday(years=years, month=month, days=days) if weekdays == 0 else weekdays
+        yeardays = self.get_yearday(years=years, month=month, days=days) if yeardays == 0 else yeardays
         is_dst = self.is_dst() if is_dst == -1 else is_dst
 
         return time.mktime((
             years,
-            months,
+            month,
             days,
             hours,
             minutes,
@@ -985,30 +1003,30 @@ class DateTime(DateTimeType):
         return self.DATETIME.month
 
     ##* get max days in month
-    def get_mon(self: DateTime, years: int = 0, months: int = 0) -> int:
+    def get_mon(self: DateTime, years: int = 0, month: int = 0) -> int:
 
         """mon(28, 29, 30, 31)"""
 
         years = self.get_year() if years == 0 else years
-        months = self.get_month() if months == 0 else months
+        month = self.get_month() if month == 0 else month
 
-        if months == 1: return 31
+        if month == 1: return 31
 
-        if months == 2: return (28 if years % 400 and not (years % 100) else 29) if not years % 4 else 28
+        if month == 2: return (28 if years % 400 and not (years % 100) else 29) if not years % 4 else 28
 
         ##* start at march
-        if months <= 12:
+        if month <= 12:
 
             ##* 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
             ##* 31, 30, 31, 30, 31
             ##* 31, 30
         
-            # return (31, 30, 31, 30, 31).__getitem__((months - 3) % 5)
+            # return (31, 30, 31, 30, 31).__getitem__((month - 3) % 5)
 
             k: int
 
             ##* start at march
-            k = (months - 3) % 5
+            k = (month - 3) % 5
             # k = k + 1
 
             ##* odd is 31 and even is 30
@@ -1017,28 +1035,28 @@ class DateTime(DateTimeType):
 
         raise DateTimeInitError(f"Invalid month")
 
-    def get_weekday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
+    def get_weekday(self: DateTime, years: int = 0, month: int = 0, days: int = 0) -> int:
 
         """weekday(0, 6)"""
 
         years = self.get_year() if years == 0 else years
-        months = self.get_month() if months == 0 else months
+        month = self.get_month() if month == 0 else month
         days = self.get_day() if days == 0 else days
 
         ##* same fast way
-        # return dt.datetime(years, months, days).weekday()
+        # return dt.datetime(years, month, days).weekday()
 
         ##* 365 default, 28 + 337, 337 is constant
         ##* start at 1900, 1, 1
         ##* (1900, years - 1) + yearday
-        ##* self.get_yearday(years=1900,months=12,days=31)
+        ##* self.get_yearday(years=1900,month=12,days=31)
         ##* if years lt 100 than start_at_years = 1, start_at_wdays=0
 
         if years < 100:
 
             return self.__get_weekday(
                 years=years,
-                months=months,
+                month=month,
                 days=days,
                 start_at_years=1,
                 start_at_wdays=0
@@ -1062,13 +1080,13 @@ class DateTime(DateTimeType):
 
         return self.__get_weekday(
             years=years,
-            months=months,
+            month=month,
             days=days,
             start_at_years=k * 100,
             start_at_wdays=w
         )
     
-    def __get_weekday(self: DateTime, years: int, months: int, days: int, start_at_years: int, start_at_wdays: int) -> int:
+    def __get_weekday(self: DateTime, years: int, month: int, days: int, start_at_years: int, start_at_wdays: int) -> int:
 
         if years < start_at_years:
 
@@ -1091,7 +1109,7 @@ class DateTime(DateTimeType):
         for Y in range(start_at_years, years):
 
             yday: int
-            yday = self.get_yearday(years=Y, months=12, days=31)
+            yday = self.get_yearday(years=Y, month=12, days=31)
 
             ##* if yday 366 than wday is equals 2
             wday += 1 if yday == 365 or not yday == 366 else 2
@@ -1099,7 +1117,7 @@ class DateTime(DateTimeType):
             wday = wday % 7
 
         ##* addition in current year
-        wday = wday + self.get_yearday(years=years, months=months, days=days)
+        wday = wday + self.get_yearday(years=years, month=month, days=days)
         wday = wday % 7
 
         ##* make it zero is monday, and six is sunday
@@ -1113,12 +1131,12 @@ class DateTime(DateTimeType):
 
         return self.DATETIME.day
 
-    def get_yearday(self: DateTime, years: int = 0, months: int = 0, days: int = 0) -> int:
+    def get_yearday(self: DateTime, years: int = 0, month: int = 0, days: int = 0) -> int:
 
         """yearday(0, 365, 366)"""
 
         years = self.get_year() if years == 0 else years
-        months = self.get_month() if months == 0 else months
+        month = self.get_month() if month == 0 else month
         days = self.get_day() if days == 0 else days
 
         z: int
@@ -1127,9 +1145,9 @@ class DateTime(DateTimeType):
         m: int
         m = 0
 
-        for m in range(1, months):
+        for m in range(1, month):
 
-            z += self.get_mon(years=years, months=m)
+            z += self.get_mon(years=years, month=m)
 
         return z + days
         
@@ -1246,15 +1264,15 @@ class TimeFix(TimeFixType):
         return d
 
     @classmethod
-    def get_months(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]:
+    def get_month(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]:
 
-        months: int
+        month: int
 
         ##* make it index (0, 11)
-        months = dt.get_month() - 1
+        month = dt.get_month() - 1
 
         ##* start at 1 from (index)
-        return (months + 1, cls.MONTH_NAMES[months], cls.MONTH_FULLNAMES[months])
+        return (month + 1, cls.MONTH_NAMES[month], cls.MONTH_FULLNAMES[month])
 
     @classmethod
     def get_weekdays(cls: TimeFixType, dt: DateTimeType) -> Tuple[int, str, str]:
